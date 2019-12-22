@@ -1,6 +1,6 @@
 /* ************************************************************************************************
  *                                                                                                *
- * Plese read the following tutorial before implementing tasks:                                   *
+ * Please read the following tutorial before implementing tasks:                                   *
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise       *
  *                                                                                                *
  ************************************************************************************************ */
@@ -28,8 +28,16 @@
  *      .catch((error) => console.log(error.message)) // 'Error: Wrong parameter is passed!
  *                                                    //  Ask her again.';
  */
-function willYouMarryMe(/* isPositiveAnswer */) {
-  throw new Error('Not implemented');
+function willYouMarryMe(isPositiveAnswer) {
+  return new Promise(((resolve, reject) => {
+    if (isPositiveAnswer === undefined) {
+      reject(new Error('Wrong parameter is passed! Ask her again.'));
+    }
+    if (isPositiveAnswer) {
+      resolve('Hooray!!! She said "Yes"!');
+    }
+    resolve('Oh no, she said "No".');
+  }));
 }
 
 
@@ -48,8 +56,15 @@ function willYouMarryMe(/* isPositiveAnswer */) {
  *    })
  *
  */
-function processAllPromises(/* array */) {
-  throw new Error('Not implemented');
+function processAllPromises(array) {
+  return new Promise(((resolve) => {
+    const a = [];
+    for (let i = 0; i < array.length; i += 1) {
+      const promise = array[i];
+      promise.then((n) => a.push(n));
+    }
+    resolve(a);
+  }));
 }
 
 /**
@@ -71,8 +86,9 @@ function processAllPromises(/* array */) {
  *    })
  *
  */
-function getFastestPromise(/* array */) {
-  throw new Error('Not implemented');
+function getFastestPromise(array) {
+  return Promise.race(array)
+    .then((m) => m);
 }
 
 /**
@@ -92,8 +108,19 @@ function getFastestPromise(/* array */) {
  *    });
  *
  */
-function chainPromises(/* array, action */) {
-  throw new Error('Not implemented');
+function chainPromises(array, action) {
+  let bound = 1;
+  return array.reduce((acc, promise, index) => {
+    if (index >= bound) {
+      return acc.then((r1) => promise
+        .then((r2) => action(r1, r2))
+        .catch(() => r1)).catch(() => {
+        bound += 1;
+        return array[index + 1];
+      });
+    }
+    return acc;
+  }, array[0]);
 }
 
 module.exports = {
